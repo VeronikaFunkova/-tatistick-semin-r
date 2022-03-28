@@ -42,14 +42,14 @@ rf.all = do.call(combine, rf.out)
 
 #pred = predict(rf.all, test)
 crows = splitIndices(nrow(test), nc) 
-predp = function(x) predict(rf.all, test[x, ])
+predp = function(x) as.vector(predict(rf.all, test[x, ]))
 cpred = mclapply(crows, predp, mc.cores = nc)
 pred = do.call(c, cpred) 
 
 correct <- sum(pred == test$lettr)
 
 mtry = mtry_val[which.min(err)]
-#rf.all = randomForest(lettr ~ ., train, ntree = ntree, mtry = mtry)             #random forest No.3 - this random forest we have to parallelize
+#rf.all = randomForest(lettr ~ ., train, ntree = ntree, mtry = mtry)             #random forest No.3 - this random forest we have to parallelize.
 rfp2 = function(x) randomForest(lettr ~ ., train, ntree=x, mtry = mtry, norm.votes = FALSE)
 rf.out = mclapply(ntreep, rfp2, mc.cores = nc)
 rf.all = do.call(combine, rf.out)
